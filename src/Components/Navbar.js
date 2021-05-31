@@ -11,6 +11,7 @@ import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import MoreIcon from '@material-ui/icons/MoreVert';
 import {Nav, Navbar} from "react-bootstrap";
+import Login from './Login';
 
 const useStyles = makeStyles((theme) => ({
     grow: {
@@ -82,6 +83,7 @@ export default function AppNavbar() {
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
     const [isLoggedIn, setLogin] = useState(false);
     const [user, setUser] = useState({});
+    const [showLogin, setShowLogin] = useState(false);
 
     const isMenuOpen = Boolean(anchorEl);
     const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
@@ -95,7 +97,9 @@ export default function AppNavbar() {
     }, [])
     const handleProfileMenuOpen = (event) => {
         if(isLoggedIn === true) setAnchorEl(event.currentTarget);
-        else window.location.replace("/login");
+        else{
+            setShowLogin(true)
+        }
     };
 
     const handleMobileMenuClose = () => {
@@ -113,6 +117,7 @@ export default function AppNavbar() {
 
     const handleLogout = () => {
         localStorage.removeItem("userDetails");
+        setLogin(false);
         window.location.reload();
     }
     const menuId = 'primary-search-account-menu';
@@ -174,6 +179,7 @@ export default function AppNavbar() {
 
     return (
         <>
+        {showLogin && <Login setLogin = {setLogin}/>}
         <Navbar bg="light" expand="sm">
             <Navbar.Brand href="#">LOGO</Navbar.Brand>
             <Navbar.Toggle aria-controls="navbarScroll"/>
