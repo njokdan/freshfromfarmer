@@ -37,6 +37,10 @@
   }
 }
 
+/* Sidebar */
+.makeStyles-drawerPaper-16{
+  top: 55px !important;
+}
 /* FONTEND */
 .nav-icons{
   align-items: flex-end;
@@ -64,4 +68,8 @@
   text-align: center;
   font-size: small;
   margin-top: 25px;
+}
+/* ADMIN */
+.content{
+  margin-left: 260px;
 }

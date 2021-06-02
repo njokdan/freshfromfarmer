@@ -88,6 +88,7 @@ export default function AppNavbar() {
     const isMenuOpen = Boolean(anchorEl);
     const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
     const token = JSON.parse(localStorage.getItem("user"));
+
     // componentdidmount
     useEffect(() => {
         if(token!== null && token !== undefined){
@@ -116,10 +117,17 @@ export default function AppNavbar() {
     };
 
     const handleLogout = () => {
-        localStorage.removeItem("userDetails");
+        localStorage.removeItem("user");
         setLogin(false);
         window.location.reload();
     }
+
+    const change = () => {
+        if(token.userType === "admin")
+            window.location.replace("/admin/orders/")
+        
+    }
+
     const menuId = 'primary-search-account-menu';
     const renderMenu = (
         <Menu
@@ -131,7 +139,7 @@ export default function AppNavbar() {
             open={isMenuOpen}
             onClose={handleMenuClose}
         >
-            { isLoggedIn === true && <MenuItem>Hi {user.name}</MenuItem> }
+            { isLoggedIn === true && <MenuItem onClick = {change}>Hi {user.userName}</MenuItem> }
             <MenuItem onClick={handleLogout}>Log Out</MenuItem>
         </Menu>
     );
@@ -178,18 +186,18 @@ export default function AppNavbar() {
     );
 
     return (
-        <>
+        <div style={{position: "fixed", width:"100%", maxHeight: "25px"}}>
         {showLogin && <Login setLogin = {setLogin}/>}
-        <Navbar bg="light" expand="sm">
+        <Navbar expand="sm" style={{backgroundColor: "#ebebeb"}}>
             <Navbar.Brand href="#">LOGO</Navbar.Brand>
             <Navbar.Toggle aria-controls="navbarScroll"/>
-            <Navbar.Collapse id="navbarScroll">
+            <Navbar.Collapse id="navbarScroll" style={{height: "25px"}}>
                 <Nav
                     className="mr-auto my-2 my-lg-0"
                     style={{maxHeight: '100px'}}
                     navbarScroll
                 >
-                    <Nav.Link href="#action1">Home</Nav.Link>
+                    <Nav.Link href="/">Home</Nav.Link>
                     <Nav.Link href="#action2">Products</Nav.Link>
                     <Nav.Link href="#action2">Gallery</Nav.Link>
                     <Nav.Link href="#action2">Contact</Nav.Link>
@@ -215,9 +223,9 @@ export default function AppNavbar() {
                 <Toolbar>
 
                     <div className={classes.grow}/>
-                    <div className={classes.sectionDesktop} style={{marginTop: "-100px"}}>
-                        <IconButton aria-label="show 4 new mails" color="inherit">
-                            <Badge badgeContent={4} color="secondary">
+                    <div className={classes.sectionDesktop} style={{marginTop: "-110px"}}>
+                        <IconButton aria-label="show 5 new items" color="inherit">
+                            <Badge badgeContent={5} color="secondary">
                                 <ShoppingCartIcon />
                             </Badge>
                         </IconButton>
@@ -253,6 +261,6 @@ export default function AppNavbar() {
             {renderMobileMenu}
             {renderMenu}
         </div>
-        </>
+        </div>
     );
 }

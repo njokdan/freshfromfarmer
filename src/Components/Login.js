@@ -1,33 +1,30 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Button, TextField } from "@material-ui/core";
 import { Modal } from "react-bootstrap"
 import db from "../Firebase";
 
 export default function Login(props) {
   var [state, setState] = useState({});
-  var [user, setUser] = useState({});
-
   const [show, setShow] = useState(true);
 
   const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
 
 
   const login = async () => {
     const data = await db
       .firestore()
       .collection("users")
-      .doc(state.)
+      .doc(state.phone)
       .get();
 
     var user = data.data();
 
-    if (user === {}) {
+    if (user === {} || user === undefined || user === null) {
       alert("Invalid Phone Number");
       return;
     }
     if (user.password === state.password) {
-      alert("success");
+      alert("You are now Logged in!!");
 
       var userDetails = {
           userType: user.type,
@@ -35,21 +32,24 @@ export default function Login(props) {
           userId: user.phone
       };
 
-      localStorage.setItem("userDetails", JSON.stringify(userDetails))
+      localStorage.setItem("user", JSON.stringify(userDetails))
       props.setLogin(true);
-      if(user.type === "admin") window.location.replace("/admin/");
+      if(user.type === "admin") window.location.replace("/admin/orders/");
     } else {
       alert("Invalid password, please try again!");
     }
 }
 
   const handleChange = (e) => {
-    setState({ [e.target.name]: e.target.value });
+    const {name, value} = e.target;
+    setState({
+      ...state,
+      [name]: value,
+    })
   };
 
   return (
     <>
-
       <Modal
         show={show}
         onHide={handleClose}
