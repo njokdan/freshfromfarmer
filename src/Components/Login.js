@@ -48,6 +48,10 @@ export default function Login(props) {
     })
   };
 
+  const toSignup = ()=>{
+    window.location.replace("/signup");
+  }
+
   return (
     <>
       <Modal
