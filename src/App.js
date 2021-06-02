@@ -12,6 +12,7 @@ function App() {
           <Route exact path={"/"} component={Frontend}/>
           <Route exact path={"/admin/orders/"} component={Orders}/>
           <Route exact path={"/admin/items/"} component={Items}/>
+          
         </Switch>
       </Router>
     </div>
