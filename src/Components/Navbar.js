@@ -186,7 +186,7 @@ export default function AppNavbar() {
     );
 
     return (
-        <div style={{position: "fixed", width:"100%", maxHeight: "25px"}}>
+        <div style={{position: "fixed", width:"100%", maxHeight: "25px", zIndex: "100"}}>
         {showLogin && <Login setLogin = {setLogin}/>}
         <Navbar expand="sm" style={{backgroundColor: "#ebebeb"}}>
             <Navbar.Brand href="#">LOGO</Navbar.Brand>

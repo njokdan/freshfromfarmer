@@ -7,7 +7,7 @@ function App() {
     return (
         <div>
             {/* Nav bar */}
-            <Navbar />
+            <Navbar/>
             {/*  Carousal  */}
             <Carousel fade>
                 <Carousel.Item>
