@@ -1,43 +1,143 @@
-import { Typography } from "@material-ui/core";
-import React from "react";
+import {
+  Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+} from "@material-ui/core";
+import { Button as Btn } from "react-bootstrap";
+import React, { useEffect, useState } from "react";
+import db from "../../Firebase";
 import AppNavbar from "../Navbar";
 import Sidebar from "./Sidebar";
 
 function Orders(props) {
+  const [orders, setOrders] = useState();
+
+  const fetchOrders = async () => {
+    const response = db.firestore().collection("orders");
+
+    response.onSnapshot((docSnapshot) => {
+      let arr = [];
+
+      docSnapshot.forEach((item) => {
+        arr.push({ ...item.data(), ["orderId"]: item.id });
+      });
+
+      setOrders(arr);
+    });
+  };
+
+  useEffect(() => {
+    fetchOrders();
+  }, []);
+
+  const setDates = async (order, startDate, val, inc, index) => {
+    var date = new Date(startDate);
+    date.setDate(date.getDate() + 1);
+
+    for (let i = 0; i < val; i += inc) {
+      date.setDate(date.getDate() + 1);
+      console.log(date);
+      console.log(i);
+
+      var a = await db
+        .firestore()
+        .collection("supply")
+        .doc(date.toDateString())
+        .get()
+        .then((doc) => {
+          if (doc.data() !== undefined) {
+            db.firestore()
+              .collection("supply")
+              .doc(date.toDateString())
+              .collection(order.customer)
+              .doc(order.item)
+              .update({
+                [order.item]:
+                  (doc.data() ? parseInt(doc.data()[order.item]) : 0) +
+                  parseInt(order.quantity),
+              });
+          } else {
+            db.firestore()
+              .collection("supply")
+              .doc(date.toDateString())
+              .collection(order.customer)
+              .doc(order.item)
+              .set({
+                quantity: parseInt(order.quantity),
+                phone: order.customer,
+                item: order.item,
+              });
+          }
+        });
+    }
+
+    deleteOrder(index)
+  };
+  const approve = (index) => {
+    if (window.confirm("Are you sure to approve this order?")) {
+      var order = orders[index];
+
+      if (order.plan === "monthly") {
+        setDates(order, order.date, 30, 1, index);
+      } else if (order.plan === "alternative") {
+        setDates(order, order.date, 30, 2, index);
+      } else if (order.plan === "weekly") {
+        setDates(order, order.date, 7, 1, index);
+      } else if (order.plan === "tommorow") {
+        setDates(order, order.date, 1, 1, index);
+      }
+    }
+  };
+
+  const deleteOrder = (index) => {
+    if (window.confirm("Are you sure to delete this order?")) {
+      db.firestore().collection("orders").doc(orders[index].orderId).delete();
+    }
+  };
   return (
     <div>
       <AppNavbar />
       <Sidebar />
       <div className="content">
-        <Typography paragraph>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua. Rhoncus
-          dolor purus non enim praesent elementum facilisis leo vel. Risus at
-          ultrices mi tempus imperdiet. Semper risus in hendrerit gravida rutrum
-          quisque non tellus. Convallis convallis tellus id interdum velit
-          laoreet id donec ultrices. Odio morbi quis commodo odio aenean sed
-          adipiscing. Amet nisl suscipit adipiscing bibendum est ultricies
-          integer quis. Cursus euismod quis viverra nibh cras. Metus vulputate
-          eu scelerisque felis imperdiet proin fermentum leo. Mauris commodo
-          quis imperdiet massa tincidunt. Cras tincidunt lobortis feugiat
-          vivamus at augue. At augue eget arcu dictum varius duis at consectetur
-          lorem. Velit sed ullamcorper morbi tincidunt. Lorem donec massa sapien
-          faucibus et molestie ac.
-        </Typography>
-        <Typography paragraph>
-          Consequat mauris nunc congue nisi vitae suscipit. Fringilla est
-          ullamcorper eget nulla facilisi etiam dignissim diam. Pulvinar
-          elementum integer enim neque volutpat ac tincidunt. Ornare suspendisse
-          sed nisi lacus sed viverra tellus. Purus sit amet volutpat consequat
-          mauris. Elementum eu facilisis sed odio morbi. Euismod lacinia at quis
-          risus sed vulputate odio. Morbi tincidunt ornare massa eget egestas
-          purus viverra accumsan in. In hendrerit gravida rutrum quisque non
-          tellus orci ac. Pellentesque nec nam aliquam sem et tortor. Habitant
-          morbi tristique senectus et. Adipiscing elit duis tristique
-          sollicitudin nibh sit. Ornare aenean euismod elementum nisi quis
-          eleifend. Commodo viverra maecenas accumsan lacus vel facilisis. Nulla
-          posuere sollicitudin aliquam ultrices sagittis orci a.
-        </Typography>
+        <h2 className="text-center">Orders</h2>
+        <Table>
+          <TableHead>
+            <TableCell>Customer</TableCell>
+            <TableCell>Customer Name</TableCell>
+            <TableCell>Item</TableCell>
+            <TableCell>Quantity</TableCell>
+            <TableCell>Date</TableCell>
+            <TableCell>Plan</TableCell>
+          </TableHead>
+          <TableBody>
+            {orders &&
+              orders.map((order, index) => (
+                <TableRow>
+                  <TableCell>{order.customer}</TableCell>
+                  <TableCell>{order.name}</TableCell>
+                  <TableCell>{order.item}</TableCell>
+                  <TableCell>
+                    {order.quantity ? order.quantity : (order.quantity = 1)}
+                  </TableCell>
+                  <TableCell>{order.date}</TableCell>
+                  <TableCell>{order.plan}</TableCell>
+                  <TableCell>
+                    <Btn variant="success" onClick={() => approve(index)}>
+                      Approve
+                    </Btn>
+                  </TableCell>
+                  <TableCell>
+                    <Btn variant="danger" onClick={() => deleteOrder(index)}>
+                      Delete
+                    </Btn>
+                  </TableCell>
+                </TableRow>
+              ))}
+          </TableBody>
+        </Table>
       </div>
     </div>
   );

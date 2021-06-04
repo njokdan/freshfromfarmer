@@ -18,7 +18,6 @@ import {
 function Items(props) {
   const [showAddItem, setshowAddItem] = useState(false);
   const [items, setItems] = useState();
-  const [state, setState] = useState({});
 
   const fetchItems = async () => {
     const response = db.firestore().collection("items");

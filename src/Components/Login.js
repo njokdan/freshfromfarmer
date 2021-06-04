@@ -29,7 +29,7 @@ export default function Login(props) {
       var userDetails = {
           userType: user.type,
           userName: user.name,
-          userId: user.phone
+          userId: state.phone,
       };
 
       localStorage.setItem("user", JSON.stringify(userDetails))

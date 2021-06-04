@@ -10,12 +10,14 @@ import {
   Grid,
   ListItem,
   Select,
+  TextField,
 } from "@material-ui/core";
-
+import Login from "./Login";
 
 function Products(props) {
   const [items, setItems] = useState();
   const [state, setState] = useState({});
+  const [showLogin, setShowLogin] = useState(false);
 
   const fetchItems = async () => {
     const response = db.firestore().collection("items");
@@ -35,22 +37,40 @@ function Products(props) {
   }, []);
 
   const handleChange = (e) => {
-    const {name, value} = e.target;
+    const { name, value } = e.target;
     setState({
       ...state,
       [name]: value,
-    })
-  }
+    });
+  };
 
   const book = (name) => {
-    let plan = state.plan;
-
-    console.log(name, plan)
-  }
+    var user = JSON.parse(localStorage.getItem("user"));
+    if(user === undefined || user === null)
+    {
+      alert("Please login to order this!!");
+      setShowLogin(true);
+    }
+    else if (state.plan === undefined) alert("Please select a plan");
+    else {
+      var order = {
+        customer: user.userId,
+        name: user.userName,
+        plan: state.plan,
+        item: name,
+        quantity: state.quantity,
+        date: new Date().toLocaleString(),
+      };
+      // TODO: Integrate payment
+      if(window.confirm(`Are you sure to book order for ${name} for ${state.plan} plan?`))
+        db.firestore().collection("orders").add(order).then(() => {"Ordered successfully"; window.location.reload()});
+    }
+  };
 
   return (
     <div>
       <AppNavbar />
+      {showLogin && <Login setLogin = {() => {setShowLogin(false)}}/>}
       <div className="main">
         <h2 className="text-center">Our Products</h2>
         {items === undefined && (
@@ -70,26 +90,47 @@ function Products(props) {
               items.map((item) => {
                 return (
                   <Grid item md={3}>
-                    <Card
-                      className="text-center item-card"
-                      key={item.name}
-                    >
+                    <Card className="text-center item-card" key={item}>
                       <img
                         src={item.itemImage}
+                        alt={item.name}
+                        key={item.itemImage}
                         className="img-fluid"
                       />
 
-                      <h4>{item.name}</h4>
-                      <h5>{item.description}</h5>
-                      <p>{item.details}</p>
-                      <Select fullWidth defaultValue="choose" name="plan" onChange={handleChange}>
-                      <ListItem value="choose" disabled>Choose</ListItem>
-                        <ListItem value="monthly">Monthly</ListItem>
-                        <ListItem value="alternative">Alternative</ListItem>
-                        <ListItem value="weekly">Weekly</ListItem>
-                        <ListItem value="tommorow">Book for tommorow</ListItem>
+                      <h4 key={item.name}>{item.name}</h4>
+                      <h5 key={item.description}>{item.description}</h5>
+                      <p key={item.details}>{item.details}</p>
+
+                      <TextField label="Quantity" type="number" fullWidth name="quantity" onChange={handleChange}/>
+                      <br /><br />
+                      <Select
+                        fullWidth
+                        defaultValue="choose"
+                        name="plan"
+                        onChange={handleChange}
+                        key="select"
+                      >
+                        <ListItem value="choose" key="choose" disabled>
+                          Choose
+                        </ListItem>
+                        <ListItem value="monthly" key="monthly">
+                          Monthly
+                        </ListItem>
+                        <ListItem value="alternative" key="alternative">
+                          Alternative
+                        </ListItem>
+                        <ListItem value="weekly" key="weekly">
+                          Weekly
+                        </ListItem>
+                        <ListItem value="tommorow" key="tommorow">
+                          Book for tommorow
+                        </ListItem>
                       </Select>
-                      <h4>{item.price}/- Rs</h4>
+                      <br />
+                      <br />
+                      <h4 key={item.price}>{item.price}/- Rs</h4>
+                      <br />
                       <Button
                         variant="contained"
                         color="primary"
