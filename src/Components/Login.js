@@ -71,7 +71,7 @@ export default function Login(props) {
           onChange={handleChange}
         />
         <br />
-        <TextField label={"Password"} name="password" fullWidth onChange={handleChange} />
+         <TextField label={"Password"} name="password" fullWidth onChange={handleChange} />
         <br />
         </Modal.Body>
         <Modal.Footer>
