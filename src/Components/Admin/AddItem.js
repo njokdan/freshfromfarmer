@@ -50,9 +50,13 @@ export default function AddItem(props) {
     if(state.itemImage === undefined && state.name === undefined){
       alert("Please fill all details and try again!!")
     }
-    db.firestore().collection("items").doc(state.name).set(state);
-    alert("Item added");
-    window.location.reload();
+    
+    db.firestore().collection("items").doc(state.name).set(state).then(() => {
+      alert("Item added");
+      window.location.reload();
+    });
+    
+    
   }
   const handleChange = (e) => {
     const { name, value } = e.target;
