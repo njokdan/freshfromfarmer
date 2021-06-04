@@ -4,12 +4,14 @@ import { BrowserRouter as Router, Route, Switch} from "react-router-dom";
 import Frontend from "./Components/Frontend";
 import Orders from "./Components/Admin/Orders";
 import Items from "./Components/Admin/Items";
+import Products from "./Components/Products";
 function App() {
   return (
     <div>
       <Router>
         <Switch>
           <Route exact path={"/"} component={Frontend}/>
+          <Route exact path={"/products/"} component={Products}/>
           <Route exact path={"/admin/orders/"} component={Orders}/>
           <Route exact path={"/admin/items/"} component={Items}/>
           

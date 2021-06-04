@@ -119,6 +119,7 @@ export default function AppNavbar() {
     const handleLogout = () => {
         localStorage.removeItem("user");
         setLogin(false);
+        setShowLogin(false);
         window.location.reload();
     }
 
@@ -186,7 +187,7 @@ export default function AppNavbar() {
     );
 
     return (
-        <div style={{position: "fixed", width:"100%", maxHeight: "25px", zIndex: "100"}}>
+        <div style={{position: "fixed", width:"100%", maxHeight: "25px", marginBottom: "40px", zIndex: "100"}}>
         {showLogin && <Login setLogin = {setLogin}/>}
         <Navbar expand="sm" style={{backgroundColor: "#ebebeb"}}>
             <Navbar.Brand href="#">LOGO</Navbar.Brand>
@@ -198,7 +199,7 @@ export default function AppNavbar() {
                     navbarScroll
                 >
                     <Nav.Link href="/">Home</Nav.Link>
-                    <Nav.Link href="#action2">Products</Nav.Link>
+                    <Nav.Link href="/products/">Products</Nav.Link>
                     <Nav.Link href="#action2">Gallery</Nav.Link>
                     <Nav.Link href="#action2">Contact</Nav.Link>
                     {/*<NavDropdown title="Link" id="navbarScrollingDropdown">*/}
@@ -211,12 +212,12 @@ export default function AppNavbar() {
             </Navbar.Collapse>
             <Navbar/>
         </Navbar>
-        <div className={classes.grow}>
+        <div className={classes.grow} style={{display: "inline"}}>
             <AppBar position="static" style={{
                 backgroundColor: "#f8f9fa",
                 border: "0px",
                 boxShadow: "none",
-                height: "0px",
+                height: "0px",  
                 marginBottom: "5px",
                 color: "grey"
             }}>
