@@ -76,7 +76,7 @@ export default function Login(props) {
         </Modal.Body>
         <Modal.Footer>
           
-        <Button variant="outlined" color="primary" style={{margin: "5px"}}>
+        <Button variant="outlined" color="primary" style={{margin: "5px"}} onClick={toSignup}>
           
           Sign Up
         </Button>

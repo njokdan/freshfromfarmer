@@ -1,21 +1,24 @@
-import React, { useState } from 'react';
-import { makeStyles } from '@material-ui/core';
-import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
+import React, { useState } from "react";
+import { makeStyles } from "@material-ui/core";
+import TextField from "@material-ui/core/TextField";
+import Button from "@material-ui/core/Button";
+import AppNavbar from "./Navbar";
+import Footer from "./Footer";
+import db from "../Firebase";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   root: {
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
     padding: theme.spacing(2),
 
-    '& .MuiTextField-root': {
+    "& .MuiTextField-root": {
       margin: theme.spacing(1),
-      width: '300px',
+      width: "300px",
     },
-    '& .MuiButtonBase-root': {
+    "& .MuiButtonBase-root": {
       margin: theme.spacing(2),
     },
   },
@@ -23,60 +26,124 @@ const useStyles = makeStyles(theme => ({
 
 const Form = ({ handleClose }) => {
   const classes = useStyles();
-  // create state variables for each input
-  const [Name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const[address,setAddress]=useState('');
+  const [state, setState] = useState({});
 
-  const handleSubmit = e => {
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setState({
+      ...state,
+      [name]: value,
+    });
+  };
+
+  const signUp = async (e) => {
     e.preventDefault();
-    console.log(firstName,  email, address,password);
-    handleClose();
+    const data = await db
+      .firestore()
+      .collection("users")
+      .doc(state.phone)
+      .get();
+
+    var user = data.data();
+
+    if (state.password !== state.repassword) alert("Password does not match");
+    else if (user !== {} && user !== undefined && user !== null) {
+      // console.log(user);
+      alert("Phone Number already exists");
+    } else {
+      // console.log(state);
+
+      db.firestore()
+        .collection("users")
+        .doc(state.phone)
+        .set(state)
+        .then(() => {
+          alert("Account created successfully");
+          
+        });
+    }
   };
 
   return (
-    <form className={classes.root} onSubmit={handleSubmit}>
-      <TextField
-        label="Name"
-        variant="filled"
-        required
-        value={firstName}
-        onChange={e => setName(e.target.value)}
-      />
-      <TextField
-        label="UserName"
-        variant="filled"
-        type="email"
-        required
-        value={email}
-        onChange={e => setEmail(e.target.value)}
-      />
-      <TextField
-        label="Address"
-        variant="filled"
-        required
-        value={address}
-        onChange={e => setaddress(e.target.value)}
-      />
-      
-      <TextField
-        label="Password"
-        variant="filled"
-        type="password"
-        required
-        value={password}
-        onChange={e => setPassword(e.target.value)}
-      />
-      <div>
-        <Button variant="contained" onClick={handleClose}>
-          Cancel
-        </Button>
-        <Button type="submit" variant="contained" color="primary">
-          Signup
-        </Button>
+    <div>
+      <AppNavbar />
+      <div className="main">
+        <form className={classes.root} >
+          <TextField
+            label="Name"
+            variant="filled"
+            required
+            name="name"
+            value={state.name}
+            onChange={handleChange}
+          />
+          <TextField
+            label="Phone Number"
+            variant="filled"
+            required
+            name="phone"
+            value={state.phone}
+            onChange={handleChange}
+          />
+          <TextField
+            label="Email"
+            variant="filled"
+            required
+            name="email"
+            value={state.email}
+            onChange={handleChange}
+          />
+
+          <TextField
+            label="Address"
+            variant="filled"
+            required
+            name="address"
+            value={state.address}
+            onChange={handleChange}
+          />
+          <TextField
+            label="Pincode"
+            variant="filled"
+            required
+            name="pincode"
+            value={state.pincode}
+            onChange={handleChange}
+          />
+
+          <TextField
+            label="Password"
+            variant="filled"
+            type="password"
+            required
+            name="password"
+            value={state.password}
+            onChange={handleChange}
+          />
+
+          <TextField
+            label="Re Enter Password"
+            variant="filled"
+            type="password"
+            required
+            name="repassword"
+            value={state.repassword}
+            onChange={handleChange}
+          />
+          <div>
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              onClick={signUp}
+            >
+              Signup
+            </Button>
+          </div>
+        </form>
       </div>
-    </form>
+      <Footer />
+    </div>
   );
 };
 
