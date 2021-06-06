@@ -7,8 +7,11 @@ import {
   Button,
   Card,
   CircularProgress,
+  FormControlLabel,
   Grid,
   ListItem,
+  Radio,
+  RadioGroup,
   Select,
   TextField,
 } from "@material-ui/core";
@@ -46,31 +49,48 @@ function Products(props) {
 
   const book = (name) => {
     var user = JSON.parse(localStorage.getItem("user"));
-    if(user === undefined || user === null)
-    {
+    if (user === undefined || user === null) {
       alert("Please login to order this!!");
       setShowLogin(true);
-    }
-    else if (state.plan === undefined) alert("Please select a plan");
+    } else if (state.plan === undefined) alert("Please select a plan");
+    else if (state.time === undefined) alert("Please select a time");
     else {
       var order = {
         customer: user.userId,
         name: user.userName,
         plan: state.plan,
         item: name,
-        quantity: state.quantity,
+        quantity: state.quantity ? state.quantity : 1,
+        time: state.time,
         date: new Date().toLocaleString(),
       };
+    
       // TODO: Integrate payment
-      if(window.confirm(`Are you sure to book order for ${name} for ${state.plan} plan?`))
-        db.firestore().collection("orders").add(order).then(() => {"Ordered successfully"; window.location.reload()});
+      if (
+        window.confirm(
+          `Are you sure to book order for ${name} for ${state.plan} plan?`
+        )
+      )
+        db.firestore()
+          .collection("orders")
+          .add(order)
+          .then(() => {
+            "Ordered successfully";
+            window.location.reload();
+          });
     }
   };
 
   return (
     <div>
       <AppNavbar />
-      {showLogin && <Login setLogin = {() => {setShowLogin(false)}}/>}
+      {showLogin && (
+        <Login
+          setLogin={() => {
+            setShowLogin(false);
+          }}
+        />
+      )}
       <div className="main">
         <h2 className="text-center">Our Products</h2>
         {items === undefined && (
@@ -102,8 +122,15 @@ function Products(props) {
                       <h5 key={item.description}>{item.description}</h5>
                       <p key={item.details}>{item.details}</p>
 
-                      <TextField label="Quantity" type="number" fullWidth name="quantity" onChange={handleChange}/>
-                      <br /><br />
+                      <TextField
+                        label="Quantity"
+                        type="number"
+                        fullWidth
+                        name="quantity"
+                        onChange={handleChange}
+                      />
+                      <br />
+                      <br />
                       <Select
                         fullWidth
                         defaultValue="choose"
@@ -129,6 +156,25 @@ function Products(props) {
                       </Select>
                       <br />
                       <br />
+                      <RadioGroup
+                        name="time"
+                        value={state.time}
+                        onChange={handleChange}
+                        style={{display: "inline"}}
+                      >
+                        <FormControlLabel
+                          value="morning"
+                          control={<Radio color="primary" />}
+                          label="Morning"
+                          labelPlacement="end"
+                        />
+                        <FormControlLabel
+                          value="evening"
+                          control={<Radio color="primary" />}
+                          label="Evening"
+                          labelPlacement="end"
+                        />
+                      </RadioGroup>
                       <h4 key={item.price}>{item.price}/- Rs</h4>
                       <br />
                       <Button

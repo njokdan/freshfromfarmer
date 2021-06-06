@@ -11,7 +11,7 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import MailIcon from "@material-ui/icons/Mail";
-import { Link } from "react-router-dom";
+import Link from "@material-ui/core/Link";
 
 const drawerWidth = 240;
 
@@ -114,31 +114,25 @@ function Sidebar(props) {
         </div> */}
         <Divider />
         <List>
-          <Link to="/admin/orders">
-            <ListItem button>
+            <ListItem button component={Link} href="/admin/orders">
               <ListItemIcon>
                 <MailIcon />
               </ListItemIcon>
               <ListItemText primary={"Orders"} />
             </ListItem>
-          </Link>
 
-          <Link to="/admin/items">
-            <ListItem button>
+            <ListItem button component={Link} href="/admin/items">
               <ListItemIcon>
                 <MailIcon />
               </ListItemIcon>
               <ListItemText primary={"Items"} />
             </ListItem>
-          </Link>
-          <Link to="/admin/supply">
-            <ListItem button>
+            <ListItem button component={Link} href="/admin/supply">
               <ListItemIcon>
                 <MailIcon />
               </ListItemIcon>
               <ListItemText primary={"Supply"} />
             </ListItem>
-          </Link>
           <ListItem button>
             <ListItemIcon>
               <MailIcon />
