@@ -1,5 +1,4 @@
 import {
-  Button,
   Table,
   TableBody,
   TableCell,
@@ -22,7 +21,7 @@ function Orders(props) {
       let arr = [];
 
       docSnapshot.forEach((item) => {
-        arr.push({ ...item.data(), ["orderId"]: item.id });
+        arr.push({ ...item.data(), "orderId": item.id });
       });
 
       setOrders(arr);
@@ -38,31 +37,38 @@ function Orders(props) {
     date.setDate(date.getDate() + 1);
 
     for (let i = 0; i < val; i += inc) {
-      date.setDate(date.getDate() + 1);
-      console.log(date);
-      console.log(i);
+      date.setDate(date.getDate() + inc);
+      var temp = order.time + date.toLocaleDateString().replaceAll("/", "-").toString();
+
 
       var a = await db
         .firestore()
         .collection("supply")
-        .doc(date.toDateString())
+        .doc(temp)
+        .collection(order.customer)
+        .doc(order.item)
         .get()
         .then((doc) => {
           if (doc.data() !== undefined) {
+            console.log(doc.data() ? doc.data() : 0)
             db.firestore()
               .collection("supply")
-              .doc(date.toDateString())
+              .doc(temp)
               .collection(order.customer)
               .doc(order.item)
               .update({
-                [order.item]:
-                  (doc.data() ? parseInt(doc.data()[order.item]) : 0) +
+                "quantity":
+                  (doc.data() ? parseInt(doc.data().quantity) : 0) +
                   parseInt(order.quantity),
               });
           } else {
             db.firestore()
               .collection("supply")
-              .doc(date.toDateString())
+              .doc(temp)
+              .set({"datetime": temp});
+            db.firestore()
+              .collection("supply")
+              .doc(temp)
               .collection(order.customer)
               .doc(order.item)
               .set({
@@ -74,18 +80,18 @@ function Orders(props) {
         });
     }
 
-    deleteOrder(index)
+    // deleteOrder(index)
   };
   const approve = (index) => {
     if (window.confirm("Are you sure to approve this order?")) {
       var order = orders[index];
 
       if (order.plan === "monthly") {
-        setDates(order, order.date, 30, 1, index);
+        setDates(order, order.date, 5, 1, index);
       } else if (order.plan === "alternative") {
-        setDates(order, order.date, 30, 2, index);
+        setDates(order, order.date, 5, 2, index);
       } else if (order.plan === "weekly") {
-        setDates(order, order.date, 7, 1, index);
+        setDates(order, order.date, 2, 1, index);
       } else if (order.plan === "tommorow") {
         setDates(order, order.date, 1, 1, index);
       }
@@ -110,6 +116,7 @@ function Orders(props) {
             <TableCell>Item</TableCell>
             <TableCell>Quantity</TableCell>
             <TableCell>Date</TableCell>
+            <TableCell>Time</TableCell>
             <TableCell>Plan</TableCell>
           </TableHead>
           <TableBody>
@@ -123,6 +130,7 @@ function Orders(props) {
                     {order.quantity ? order.quantity : (order.quantity = 1)}
                   </TableCell>
                   <TableCell>{order.date}</TableCell>
+                  <TableCell>{order.time}</TableCell>
                   <TableCell>{order.plan}</TableCell>
                   <TableCell>
                     <Btn variant="success" onClick={() => approve(index)}>
@@ -139,6 +147,7 @@ function Orders(props) {
           </TableBody>
         </Table>
       </div>
+      
     </div>
   );
 }

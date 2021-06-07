@@ -109,3 +109,8 @@
 .item-card h3{
   font-weight: 500;
 }
+
+.order-inputs
+{
+  padding: 30px !important;
+}
