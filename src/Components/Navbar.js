@@ -201,7 +201,7 @@ export default function AppNavbar() {
                     <Nav.Link href="/">Home</Nav.Link>
                     <Nav.Link href="/products/">Products</Nav.Link>
                     <Nav.Link href="#action2">Gallery</Nav.Link>
-                    <Nav.Link href="#action2">Contact</Nav.Link>
+                    <Nav.Link href="/contact/">Contact</Nav.Link>
                     {/*<NavDropdown title="Link" id="navbarScrollingDropdown">*/}
                     {/*    <NavDropdown.Item href="#action3">Action</NavDropdown.Item>*/}
                     {/*    <NavDropdown.Item href="#action4">Another action</NavDropdown.Item>*/}

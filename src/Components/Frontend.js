@@ -2,6 +2,7 @@ import React from "react";
 import {Button, Card, Carousel} from 'react-bootstrap'
 import Navbar from "./Navbar";
 import Footer from "./Footer";
+import Review from "./Review";
 
 function App() {
     return (
@@ -114,6 +115,7 @@ function App() {
             </div>
 
             <br /> <br />
+            <Review/>
 
         {/*  Footer  */}
             <Footer />

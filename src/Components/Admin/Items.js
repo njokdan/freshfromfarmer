@@ -67,10 +67,12 @@ function Items(props) {
     });
   };
 
+
   const update = (name, index) => {
-    db.firestore().collection("items").doc(name).set(items[index]);
-    alert("Updated");
-    window.location.reload();
+    db.firestore().collection("items").doc(name).set(items[index]).then(() => {
+      alert("Updated");
+      window.location.reload();
+    });
   };
 
   const deleteItem = (name) => {

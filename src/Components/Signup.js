@@ -60,7 +60,7 @@ const Form = ({ handleClose }) => {
         .then(() => {
           alert("Account created successfully");
           
-        });
+        });  
     }
   };
 
