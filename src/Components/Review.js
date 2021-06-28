@@ -1,54 +1,42 @@
-import React from "react";
-import { Carousel} from 'react-bootstrap'
+import React, { useEffect, useState } from "react";
+import { Carousel } from "react-bootstrap";
+import db from "../Firebase";
 
+function Review() {
+  const [reviews, setReviews] = useState();
 
-function App() {
-    return (
-        <div>
-            {/*  Carousal  */}
-            <Carousel fade>
-                <Carousel.Item>
-                    <img
-                        className="d-block w-100"
-                        src="https://wallpapercave.com/wp/wp2034279.jpg"
-                        alt="First slide"
-                        height={"400px"}
-                    />
-                    <Carousel.Caption>
-                        <h3>First slide label</h3>
-                        <p>Nulla vitae elit libero, a pharetra augue mollis interdum.</p>
-                    </Carousel.Caption>
-                </Carousel.Item>
-                <Carousel.Item>
-                    <img
-                        className="d-block w-100"
-                        src="https://cdn.wallpapersafari.com/86/70/iEKYAP.jpg"
-                        alt="Second slide"
-                        height={"400px"}
-                    />
-                    <Carousel.Caption>
-                        <h3>Second slide label</h3>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-                    </Carousel.Caption>
-                </Carousel.Item>
-                <Carousel.Item>
-                    <img
-                        className="d-block w-100"
-                        src="https://wallpapercave.com/wp/wp2034280.jpg"
-                        alt="Third slide"
-                        height={"400px"}
-                    />
+  const fetchReviews = async () => {
+    var data = await db.firestore().collection("review").get();
 
-                    <Carousel.Caption>
-                        <h3>Third slide label</h3>
-                        <p>Praesent commodo cursus magna, vel scelerisque nisl consectetur.</p>
-                    </Carousel.Caption>
-                </Carousel.Item>
-            </Carousel>
-            <br /><br />
-           
-        </div>
-    );
+    let arr = [];
+
+    data.docs.forEach((item) => {
+      arr.push(item.data());
+    });
+
+    setReviews(arr);
+  };
+  useEffect(() => {
+    fetchReviews();
+  }, []);
+  return (
+    <div>
+      <h2 className="text-center">Our Customer's Reviews</h2>
+      <br></br>
+      {/*  Carousal  */}
+      <Carousel fade className="text-center">
+        {reviews &&
+          Object.keys(reviews).map((review) => (
+            <Carousel.Item>
+              <h3>{reviews[review].name}</h3>
+              <h4 style={{ fontWeight: "400" }}>{reviews[review].message}</h4>
+            </Carousel.Item>
+          ))}
+      </Carousel>
+      <br />
+      <br />
+    </div>
+  );
 }
 
-export default App;
+export default Review;
