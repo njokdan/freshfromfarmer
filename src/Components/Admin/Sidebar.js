@@ -10,7 +10,11 @@ import MenuIcon from "@material-ui/icons/Menu";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
-import MailIcon from "@material-ui/icons/Mail";
+import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
+import LocalMallIcon from '@material-ui/icons/LocalMall';
+import DirectionsWalkIcon from '@material-ui/icons/DirectionsWalk';
+import RateReviewIcon from '@material-ui/icons/RateReview';
+import PermContactCalendarIcon from '@material-ui/icons/PermContactCalendar';
 import Link from "@material-ui/core/Link";
 
 const drawerWidth = 240;
@@ -116,34 +120,34 @@ function Sidebar(props) {
         <List>
             <ListItem button component={Link} href="/admin/orders">
               <ListItemIcon>
-                <MailIcon />
+                <ShoppingCartIcon />
               </ListItemIcon>
               <ListItemText primary={"Orders"} />
             </ListItem>
 
             <ListItem button component={Link} href="/admin/items">
               <ListItemIcon>
-                <MailIcon />
+                <LocalMallIcon />
               </ListItemIcon>
               <ListItemText primary={"Items"} />
             </ListItem>
             <ListItem button component={Link} href="/admin/supply">
               <ListItemIcon>
-                <MailIcon />
+                <DirectionsWalkIcon />
               </ListItemIcon>
               <ListItemText primary={"Supply"} />
             </ListItem>
           <ListItem button>
             <ListItemIcon>
-              <MailIcon />
+              <RateReviewIcon />
             </ListItemIcon>
             <ListItemText primary={"Reviews"} />
           </ListItem>
-          <ListItem button>
+          <ListItem button component={Link} href="/admin/staffs">
             <ListItemIcon>
-              <MailIcon />
+              <PermContactCalendarIcon />
             </ListItemIcon>
-            <ListItemText primary={"Manage Staffs"} />
+            <ListItemText primary={"Manage Staffs"}/>
           </ListItem>
         </List>
         {/* <Divider />

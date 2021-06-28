@@ -56,8 +56,12 @@ function Supply(props) {
   ];
   var columns = [
     {
-      title: "Phone",
+      title: "Customer Phone",
       name: "phone",
+    },
+    {
+      title: "Customer Name",
+      name: "customerName",
     },
     {
       title: "Item",
@@ -66,6 +70,10 @@ function Supply(props) {
     {
       title: "Quantity",
       name: "quantity",
+    },
+    {
+      title: "staff",
+      name: "staff",
     },
     {
       title: "Address",

@@ -2,6 +2,8 @@ import {
   Table,
   TableBody,
   TableCell,
+  Select,
+  MenuItem,
   TableHead,
   TableRow,
 } from "@material-ui/core";
@@ -13,6 +15,8 @@ import Sidebar from "./Sidebar";
 
 function Orders(props) {
   const [orders, setOrders] = useState();
+  const [staffs, setStaffs] = useState();
+  const [staff, setStaff] = useState();
 
   const fetchOrders = async () => {
     const response = db.firestore().collection("orders");
@@ -21,15 +25,29 @@ function Orders(props) {
       let arr = [];
 
       docSnapshot.forEach((item) => {
-        arr.push({ ...item.data(), "orderId": item.id });
+        arr.push({ ...item.data(), orderId: item.id });
       });
 
       setOrders(arr);
     });
   };
+  const fetchStaffs = async () => {
+    const response = db.firestore().collection("staffs");
+
+    response.onSnapshot((docSnapshot) => {
+      let arr = [];
+
+      docSnapshot.forEach((item) => {
+        arr.push({ ...item.data() });
+      });
+
+      setStaffs(arr);
+    });
+  };
 
   useEffect(() => {
     fetchOrders();
+    fetchStaffs();
   }, []);
 
   const setDates = async (order, startDate, val, inc, index) => {
@@ -38,10 +56,10 @@ function Orders(props) {
 
     for (let i = 0; i < val; i += inc) {
       date.setDate(date.getDate() + inc);
-      var temp = order.time + date.toLocaleDateString().replaceAll("/", "-").toString();
+      var temp =
+        order.time + date.toLocaleDateString().replaceAll("/", "-").toString();
 
-
-      var a = await db
+      await db
         .firestore()
         .collection("supply")
         .doc(temp)
@@ -50,14 +68,13 @@ function Orders(props) {
         .get()
         .then((doc) => {
           if (doc.data() !== undefined) {
-            console.log(doc.data() ? doc.data() : 0)
             db.firestore()
               .collection("supply")
               .doc(temp)
               .collection(order.customer)
               .doc(order.item)
               .update({
-                "quantity":
+                quantity:
                   (doc.data() ? parseInt(doc.data().quantity) : 0) +
                   parseInt(order.quantity),
               });
@@ -65,7 +82,7 @@ function Orders(props) {
             db.firestore()
               .collection("supply")
               .doc(temp)
-              .set({"datetime": temp});
+              .set({ datetime: temp });
             db.firestore()
               .collection("supply")
               .doc(temp)
@@ -74,35 +91,65 @@ function Orders(props) {
               .set({
                 quantity: parseInt(order.quantity),
                 phone: order.customer,
+                customerName: order.name,
+                staff: getName(staff) + " " + staff,
                 item: order.item,
               });
           }
         });
     }
-
-    // deleteOrder(index)
   };
+
   const approve = (index) => {
     if (window.confirm("Are you sure to approve this order?")) {
-      var order = orders[index];
+      if (staff !== undefined && staff !== null) {
+        var order = orders[index];
 
-      if (order.plan === "monthly") {
-        setDates(order, order.date, 5, 1, index);
-      } else if (order.plan === "alternative") {
-        setDates(order, order.date, 5, 2, index);
-      } else if (order.plan === "weekly") {
-        setDates(order, order.date, 2, 1, index);
-      } else if (order.plan === "tommorow") {
-        setDates(order, order.date, 1, 1, index);
+        if (order.plan === "monthly") {
+          setDates(order, order.date, 5, 1, index);
+        } else if (order.plan === "alternative") {
+          setDates(order, order.date, 5, 2, index);
+        } else if (order.plan === "weekly") {
+          setDates(order, order.date, 2, 1, index);
+        } else if (order.plan === "tommorow") {
+          setDates(order, order.date, 1, 1, index);
+        }
+
+        updateOrder(index);
+      } else {
+        alert("Please select a staff");
       }
     }
   };
 
+  const updateOrder = (index) => {
+    db.firestore()
+      .collection("orders")
+      .doc(orders[index].orderId)
+      .update({ approved: staff });
+  };
+
   const deleteOrder = (index) => {
     if (window.confirm("Are you sure to delete this order?")) {
-      db.firestore().collection("orders").doc(orders[index].orderId).delete();
+      db.firestore()
+        .collection("orders")
+        .doc(orders[index].orderId)
+        .delete()
+        .then(() => {
+          alert("Order deleted");
+          window.location.reload();
+        });
     }
   };
+
+  const getName = (phn) => {
+    for (let i of staffs) {
+      if (i.phone === phn) {
+        return i.name;
+      }
+    }
+  };
+
   return (
     <div>
       <AppNavbar />
@@ -111,7 +158,7 @@ function Orders(props) {
         <h2 className="text-center">Orders</h2>
         <Table>
           <TableHead>
-            <TableCell>Customer</TableCell>
+            <TableCell>Customer Phone</TableCell>
             <TableCell>Customer Name</TableCell>
             <TableCell>Item</TableCell>
             <TableCell>Quantity</TableCell>
@@ -133,9 +180,29 @@ function Orders(props) {
                   <TableCell>{order.time}</TableCell>
                   <TableCell>{order.plan}</TableCell>
                   <TableCell>
-                    <Btn variant="success" onClick={() => approve(index)}>
-                      Approve
-                    </Btn>
+                    {order.approved === "false" ? (
+                      <>
+                        <Select
+                          fullWidth
+                          value={staff}
+                          onChange={(e) => setStaff(e.target.value)}
+                        >
+                          {staffs &&
+                            Object.keys(staffs).map((staff) => (
+                              <MenuItem value={staffs[staff].phone}>
+                                {staffs[staff].name}
+                              </MenuItem>
+                            ))}
+                        </Select>
+                        <br />
+                        <br />
+                        <Btn variant="success" onClick={() => approve(index)}>
+                          Approve
+                        </Btn>
+                      </>
+                    ) : (
+                      <>{staffs && <p> Staff : {getName(order.approved)}</p>}</>
+                    )}
                   </TableCell>
                   <TableCell>
                     <Btn variant="danger" onClick={() => deleteOrder(index)}>
@@ -147,7 +214,6 @@ function Orders(props) {
           </TableBody>
         </Table>
       </div>
-      
     </div>
   );
 }

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import AppNavbar from "../Navbar";
+import AppNavbar from "../../Navbar";
 import AddItem from "./AddItem";
-import Sidebar from "./Sidebar";
-import db from "../../Firebase";
+import Sidebar from "../Sidebar";
+import db from "../../../Firebase";
 import { Button as Btn } from "react-bootstrap";
 import {
   Box,

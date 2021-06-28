@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Button, CircularProgress, TextareaAutosize, TextField } from "@material-ui/core";
 import { Modal } from "react-bootstrap";
-import db from "../../Firebase";
+import db from "../../../Firebase";
 
 export default function AddItem(props) {
   var [state, setState] = useState({});

@@ -63,6 +63,7 @@ function Products(props) {
         quantity: state.quantity ? state.quantity : 1,
         time: state.time,
         date: new Date().toLocaleString(),
+        approved: "false",
       };
     
       // TODO: Integrate payment
